@@ -4,7 +4,23 @@ Toolkit for correction color shifts from old lenses used on modern digital camer
 
 ## The idea
 
-TODO
+The idea is to take a picture of a gray card, which, in theory, should not have any color shifts. 
+But, since there is a color shift on my camera, I made a simple set of scripts that converts the image 
+to Lab and saves the components "a" and "b" separately as an array. After that, in the arrays "a" and "b", 
+the region that is most not affected by color shift is searched. The arithmetic mean value of the color 
+component in this region is taken as such a value, which, in theory, should be on the whole image, 
+since this is an image of a gray card. After that, an array of deviations of the color component from 
+the arithmetic mean found at the previous step is created. Next, using this array of deviations, the 
+color components in the image that need to be corrected are converted. For example, consider a pixel 
+in a picture of a gray card with coordinates is 0,0. Suppose its value on "a" component is a = 20, while 
+we calculated that the arithmetic mean value of the color component ("a" in this case) in the region most 
+not affected by color shift is equal to a = 1. We write the value 1 - 20 = -19 into the array of "a" deviations.
+Then, let's say we want to fix some kind of image. Consider its pixel with coordinates 0,0. Suppose that
+the value of the component "a" in this pixel is equal to a = -20, we apply our correction to
+it -20 + (-19) = -39 The pixel value is fixed: there were too many Magenta in it, and now it has 
+as many Magenta as it would have been if there had been no color shift.
+
+![Example](http://helix.yars.free.net/oldlens/Selection_383.jpg)
 
 ## Getting Started
 
@@ -23,8 +39,8 @@ Uses PHP and PHP GD extension.
 
 TODO: How I create reference
 
-Assume /home/user/Pictures/6/darktable_exported/02085774-f11-Inf.png is a reference image
-Assume /home/user/Pictures/03093373.jpg is an image to be corrected
+* Assume /home/user/Pictures/6/darktable_exported/02085774-f11-Inf.png is a reference image
+* Assume /home/user/Pictures/03093373.jpg is an image to be corrected
 
 ```
 $ php channel.php /home/user/Pictures/6/darktable_exported/02085774-f11-Inf.png a > channel_a_f11_Inf.json
